@@ -1,0 +1,133 @@
+#include <iostream>
+using namespace std;
+
+struct node {
+    int data;
+    node* next;
+    node(int value) {
+        data = value;
+        next = NULL;
+    }
+};
+
+node* head = NULL;
+
+// Insert at End
+void insertAtEnd(int value) {
+    node* newNode = new node(value);
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+    node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+void deleteAtBeginning() {
+    if (head == NULL) {
+        cout << "List is empty!" << endl;
+        return;
+    }
+    node* temp = head;
+    head = head->next;
+    delete temp;
+}
+void deleteAtEnd() {
+    if (head == NULL) {
+        cout << "List is empty!" << endl;
+        return;
+    }
+    if (head->next == NULL) {
+        delete head;
+        head = NULL;
+        return;
+    }
+    node* temp = head;
+    while (temp->next->next != NULL) {
+        temp = temp->next;
+    }
+    delete temp->next;
+    temp->next = NULL;
+}
+void deleteAtPosition(int pos) {
+    if (head == NULL) {
+        cout << "List is empty!" << endl;
+        return;
+    }
+    if (pos == 0) {
+        deleteAtBeginning();
+        return;
+    }
+    node* temp = head;
+    for (int i = 0; temp != NULL && i < pos - 1; i++) {
+        temp = temp->next;
+    }
+    if (temp == NULL || temp->next == NULL) {
+        cout << "Position out of range!" << endl;
+        return;
+    }
+    node* delNode = temp->next;
+    temp->next = delNode->next;
+    delete delNode;
+}
+void deleteByValue(int value) {
+    if (head == NULL) {
+        cout << "List is empty!" << endl;
+        return;
+    }
+    if (head->data == value) {
+        deleteAtBeginning();
+        return;
+    }
+    node* temp = head;
+    while (temp->next != NULL && temp->next->data != value) {
+        temp = temp->next;
+    }
+    if (temp->next == NULL) {
+        cout << "Value not found!" << endl;
+        return;
+    }
+    node* delNode = temp->next;
+    temp->next = delNode->next;
+    delete delNode;
+}
+void display() {
+    node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data << "->";
+        temp = temp->next;
+    }
+    cout << "NULL" << endl;
+}
+
+int main() {
+  
+    insertAtEnd(10);
+    insertAtEnd(20);
+    insertAtEnd(30);
+    insertAtEnd(40);
+    insertAtEnd(50);
+
+    cout << "Initial List: ";
+    display();
+
+    deleteAtBeginning();
+    cout << "After deleting at beginning: ";
+    display();
+
+    deleteAtEnd();
+    cout << "After deleting at end: ";
+    display();
+
+    deleteAtPosition(1); 
+    cout << "After deleting at position 1: ";
+    display();
+
+    deleteByValue(40); 
+    cout << "After deleting value 40: ";
+    display();
+
+    return 0;
+}
