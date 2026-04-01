@@ -15,7 +15,7 @@ class stack{
     }
     void push(int val)
     {
-        if(top<=size-1)
+        if(top>=size-1)
         {
             cout<<"stack overflow\n";
             return;
