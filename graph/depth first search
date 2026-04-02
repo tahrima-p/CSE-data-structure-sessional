@@ -1,0 +1,92 @@
+#include <iostream>
+#include <stack>
+#include <vector>
+using namespace std;
+
+struct Vertex {
+    char data;
+    Vertex* next;
+};
+
+// DFS function based on your algorithm
+void DFS(Vertex* table[], int m, char start) {
+    vector<char> L; // discovered list
+    vector<char> T; // traversal list
+    stack<char> S;  // stack
+
+    // Start with vertex v
+    L.push_back(start);
+    S.push(start);
+    T.push_back(start);
+
+    cout << "DFS Traversal starting from " << start << ": ";
+
+    while (!S.empty()) {
+        char w = S.top();
+        S.pop();
+
+        int idx = w - 'A'; // assuming vertices labeled A, B, C...
+        Vertex* tptr = table[idx];
+
+        while (tptr != NULL) {
+            char adj = tptr->data;
+            // if not in L, add to L and push to stack
+            if (find(L.begin(), L.end(), adj) == L.end()) {
+                L.push_back(adj);
+                S.push(adj);
+                T.push_back(adj);
+            }
+            tptr = tptr->next;
+        }
+    }
+
+    // Output traversal list T
+    for (char v : T) {
+        cout << v << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    int m;
+    cout << "Enter number of vertices: ";
+    cin >> m;
+
+    Vertex* table[m];
+    for (int i = 0; i < m; i++) {
+        table[i] = NULL;
+    }
+
+    int edges;
+    cout << "Enter number of edges: ";
+    cin >> edges;
+
+    for (int i = 0; i < edges; i++) {
+        char u, v;
+        cout << "Enter edge (u v): ";
+        cin >> u >> v;
+
+        Vertex* nptr = new Vertex;
+        nptr->data = v;
+        nptr->next = NULL;
+
+        int idx = u - 'A';
+        if (table[idx] == NULL) {
+            table[idx] = nptr;
+        } else {
+            Vertex* tptr = table[idx];
+            while (tptr->next != NULL) {
+                tptr = tptr->next;
+            }
+            tptr->next = nptr;
+        }
+    }
+
+    char start;
+    cout << "Enter starting vertex for DFS: ";
+    cin >> start;
+
+    DFS(table, m, start);
+
+    return 0;
+}
