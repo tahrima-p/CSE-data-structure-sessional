@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Structure to represent an edge
+struct Edge {
+    int u, v, weight;
+};
+
+// Disjoint Set Union (Union-Find)
+struct DSU {
+    vector<int> parent, rank;
+
+    DSU(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; i++) parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]); // path compression
+        return parent[x];
+    }
+
+    bool unite(int x, int y) {
+        int rx = find(x), ry = find(y);
+        if (rx == ry) return false; // cycle
+        if (rank[rx] < rank[ry]) swap(rx, ry);
+        parent[ry] = rx;
+        if (rank[rx] == rank[ry]) rank[rx]++;
+        return true;
+    }
+};
+
+// Kruskal’s Algorithm
+void kruskalMST(vector<Edge>& edges, int V) {
+    // Sort edges by weight
+    sort(edges.begin(), edges.end(), [](Edge a, Edge b) {
+        return a.weight < b.weight;
+    });
+
+    DSU dsu(V);
+    vector<Edge> ET; // MST edge list
+    int ecounter = 0;
+
+    for (auto& e : edges) {
+        if (ecounter == V - 1) break;
+        if (dsu.unite(e.u, e.v)) {
+            ET.push_back(e);
+            ecounter++;
+        }
+    }
+
+    cout << "Edges in MST (Kruskal's Algorithm):\n";
+    for (auto& e : ET) {
+        cout << char('A' + e.u) << " - " << char('A' + e.v)
+             << "  weight: " << e.weight << endl;
+    }
+}
+
+int main() {
+    int V, E;
+    cout << "Enter number of vertices: ";
+    cin >> V;
+    cout << "Enter number of edges: ";
+    cin >> E;
+
+    vector<Edge> edges(E);
+    cout << "Enter edges (u v weight), vertices as letters A, B, ...:\n";
+    for (int i = 0; i < E; i++) {
+        char u, v;
+        int w;
+        cin >> u >> v >> w;
+        edges[i].u = u - 'A';
+        edges[i].v = v - 'A';
+        edges[i].weight = w;
+    }
+
+    kruskalMST(edges, V);
+
+    return 0;
+}
