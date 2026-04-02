@@ -1,0 +1,84 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+struct Vertex {
+    char data;
+    Vertex* next;
+};
+
+// BFS function
+void BFS(Vertex* table[], int m, char start) {
+    bool visited[100] = {false}; // mark visited vertices
+    queue<char> q;
+
+    int startIndex = start - 'A'; // assuming vertices labeled A, B, C...
+    visited[startIndex] = true;
+    q.push(start);
+
+    cout << "BFS Traversal starting from " << start << ": ";
+
+    while (!q.empty()) {
+        char u = q.front();
+        q.pop();
+        cout << u << " ";
+
+        // traverse adjacency list of u
+        int idx = u - 'A';
+        Vertex* tptr = table[idx];
+        while (tptr != NULL) {
+            char v = tptr->data;
+            int vIndex = v - 'A';
+            if (!visited[vIndex]) {
+                visited[vIndex] = true;
+                q.push(v);
+            }
+            tptr = tptr->next;
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    int m;
+    cout << "Enter number of vertices: ";
+    cin >> m;
+
+    Vertex* table[m];
+    for (int i = 0; i < m; i++) {
+        table[i] = NULL;
+    }
+
+    int edges;
+    cout << "Enter number of edges: ";
+    cin >> edges;
+
+    for (int i = 0; i < edges; i++) {
+        char u, v;
+        cout << "Enter edge (u v): ";
+        cin >> u >> v;
+
+        Vertex* nptr = new Vertex;
+        nptr->data = v;
+        nptr->next = NULL;
+
+        int idx = u - 'A';
+        if (table[idx] == NULL) {
+            table[idx] = nptr;
+        } else {
+            Vertex* tptr = table[idx];
+            while (tptr->next != NULL) {
+                tptr = tptr->next;
+            }
+            tptr->next = nptr;
+        }
+    }
+
+    char start;
+    cout << "Enter starting vertex for BFS: ";
+    cin >> start;
+
+    BFS(table, m, start);
+
+    return 0;
+}
